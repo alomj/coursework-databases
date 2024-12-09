@@ -19,7 +19,7 @@ async def create_project(project: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error creating project")
 
 @router.get("/projects/")
-def get_projects(
+async def get_projects(
     local_kw: Optional[str] = Query(default=None, description="Keyword to filter projects by name"),
     db: Session = Depends(get_db),
 ):
@@ -34,14 +34,14 @@ def get_projects(
         raise HTTPException(status_code=500, detail="Error fetching projects")
 
 @router.get("/projects/{project_id}")
-def get_project(project_id: int, db: Session = Depends(get_db)):
+async def get_project(project_id: int, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
     return db_project
 
 @router.put("/projects/{project_id}")
-def update_project(project_id: int, project: dict, db: Session = Depends(get_db)):
+async def update_project(project_id: int, project: dict, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -53,7 +53,7 @@ def update_project(project_id: int, project: dict, db: Session = Depends(get_db)
     return db_project
 
 @router.delete("/projects/{project_id}")
-def delete_project(project_id: int, db: Session = Depends(get_db)):
+async def delete_project(project_id: int, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
