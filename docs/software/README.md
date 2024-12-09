@@ -256,7 +256,7 @@ async def create_project(project: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error creating project")
 
 @router.get("/projects/")
-def get_projects(
+async def get_projects(
     local_kw: Optional[str] = Query(default=None, description="Keyword to filter projects by name"),
     db: Session = Depends(get_db),
 ):
@@ -271,14 +271,14 @@ def get_projects(
         raise HTTPException(status_code=500, detail="Error fetching projects")
 
 @router.get("/projects/{project_id}")
-def get_project(project_id: int, db: Session = Depends(get_db)):
+async def get_project(project_id: int, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
     return db_project
 
 @router.put("/projects/{project_id}")
-def update_project(project_id: int, project: dict, db: Session = Depends(get_db)):
+async def update_project(project_id: int, project: dict, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -290,7 +290,7 @@ def update_project(project_id: int, project: dict, db: Session = Depends(get_db)
     return db_project
 
 @router.delete("/projects/{project_id}")
-def delete_project(project_id: int, db: Session = Depends(get_db)):
+async def delete_project(project_id: int, db: Session = Depends(get_db)):
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -298,6 +298,7 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
     db.delete(db_project)
     db.commit()
     return {"message": "Project deleted successfully"}
+
 
 ```
 ### Task Контролер
@@ -311,7 +312,7 @@ from typing import List
 router = APIRouter()
 
 @router.post("/tasks/", response_model=TaskResponse)
-def create_task(task: TaskCreate, db: Session = Depends(get_db)):
+async def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     db_task = Task(name=task.name, status=task.status, project_id=task.project_id)
     db.add(db_task)
     db.commit()
@@ -319,22 +320,22 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     return db_task
 
 @router.get("/tasks/", response_model=List[TaskResponse])
-def get_tasks(db: Session = Depends(get_db)):
+async def get_tasks(db: Session = Depends(get_db)):
     return db.query(Task).all()
 
 @router.get("/projects/{project_id}/tasks", response_model=List[TaskResponse])
-def get_tasks_for_project(project_id: int, db: Session = Depends(get_db)):
+async def get_tasks_for_project(project_id: int, db: Session = Depends(get_db)):
     return db.query(Task).filter(Task.project_id == project_id).all()
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
-def get_task(task_id: int, db: Session = Depends(get_db)):
+async def get_task(task_id: int, db: Session = Depends(get_db)):
     db_task = db.query(Task).filter(Task.id == task_id).first()
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return db_task
 
 @router.put("/tasks/{task_id}", response_model=TaskResponse)
-def update_task(task_id: int, task: TaskCreate, db: Session = Depends(get_db)):
+async def update_task(task_id: int, task: TaskCreate, db: Session = Depends(get_db)):
     db_task = db.query(Task).filter(Task.id == task_id).first()
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -347,7 +348,7 @@ def update_task(task_id: int, task: TaskCreate, db: Session = Depends(get_db)):
     return db_task
 
 @router.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db)):
+async def delete_task(task_id: int, db: Session = Depends(get_db)):
     db_task = db.query(Task).filter(Task.id == task_id).first()
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -355,6 +356,7 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(db_task)
     db.commit()
     return {"message": "Task deleted successfully"}
+
 
 ```
 ### FastAPI додаток з маршрутизацією для "Project" та "Task'
