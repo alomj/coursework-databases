@@ -5,5 +5,5 @@
 ### GET
 
 ### POST
-<img src="guidelines/media/img_2.png" alt="img_2">
-![img_3.png](img_3.png)
+![image](https://github.com/user-attachments/assets/764c40d8-25c6-42aa-ad15-f7d26bdec142)
+
